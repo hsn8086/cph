@@ -1,10 +1,10 @@
 {
-    "name": "competitive-programming-helper",
-    "displayName": "Competitive Programming Helper (cph)",
+    "name": "cph-hsn-edition",
+    "displayName": "cph(HSN Edition)",
     "description": "Makes judging, compiling, and downloading problems for competitve programming easy. Also supports auto-submit for a few sites.",
     "license": "GPL-3.0-or-later",
     "icon": "icon.png",
-    "publisher": "DivyanshuAgrawal",
+    "publisher": "hsn8086",
     "version": "2077.0.0",
     "engines": {
         "vscode": "^1.52.0"
