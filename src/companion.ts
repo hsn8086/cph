@@ -184,7 +184,9 @@ const handleNewProblem = async (problem: Problem) => {
             problem: undefined,
         });
     }
-    const folder = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
+    const folder = vscode.window.activeTextEditor
+        ? path.dirname(vscode.window.activeTextEditor.document.uri.fsPath)
+        : vscode.workspace.workspaceFolders?.[0].uri.fsPath;
     if (folder === undefined) {
         vscode.window.showInformationMessage('Please open a folder first.');
         return;
