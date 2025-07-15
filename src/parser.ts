@@ -27,17 +27,38 @@ export const getProbSaveLocation = (srcPath: string): string => {
     }
     return path.join(cphFolder, baseProbName);
 };
+export const getProbSaveLocationOld = (srcPath: string): string => {
+    const savePreference = getSaveLocationPref();
+    const srcFileName = path.basename(srcPath);
+    const srcFolder = path.dirname(srcPath);
+    const hash = crypto
+        .createHash('md5')
+        .update(srcPath)
+        .digest('hex')
+        .substr(0);
+    globalThis.logger.log(`Hash for ${srcFileName} is ${hash}`);
+    const baseProbName = `.${srcFileName}_${hash}.prob`;
+    const cphFolder = path.join(srcFolder, '.cph');
+    if (savePreference && savePreference !== '') {
+        return path.join(savePreference, baseProbName);
+    }
+    return path.join(cphFolder, baseProbName);
+};
 
 /** Get the problem for a source, `null` if does not exist on the filesystem. */
 export const getProblem = (srcPath: string): Problem | null => {
-    const probPath = getProbSaveLocation(srcPath);
+    let probPath = getProbSaveLocation(srcPath);
+    if (!fs.existsSync(probPath)) {
+        probPath = getProbSaveLocationOld(srcPath);
+        if (!fs.existsSync(probPath)) {
+            return null;
+        }
+    }
     let problem: string;
     try {
         problem = fs.readFileSync(probPath).toString();
         let problemJson = JSON.parse(problem);
         console.log('Problem JSON:', problemJson);
-        globalThis.logger.log(`Problem JSON: ${JSON.stringify(problemJson)}`);
-        globalThis.logger.log(`--------------------------------------------`);
         if (!path.isAbsolute(problemJson.srcPath)) {
             // If srcPath is not absolute, convert it to absolute path
             problemJson.srcPath = path.join(
