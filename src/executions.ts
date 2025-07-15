@@ -51,12 +51,28 @@ export const runTestCase = (
         language.compiler = 'python';
     }
 
+    // spilt the compiler command if it contains spaces
+    let compilerCmd: string | string[] = language.compiler;
+    if (
+        typeof compilerCmd === 'string' &&
+        compilerCmd.includes(' ') &&
+        !(compilerCmd.startsWith('"') && compilerCmd.endsWith('"'))
+    ) {
+        compilerCmd = compilerCmd.split(' ');
+    } else if (compilerCmd.startsWith('"') && compilerCmd.endsWith('"')) {
+        compilerCmd = compilerCmd.slice(1, -1);
+    }
+
     // Start the binary or the interpreter.
     switch (language.name) {
         case 'python': {
             process = spawn(
-                language.compiler, // 'python3' or 'python' TBD
-                [binPath, ...language.args],
+                Array.isArray(compilerCmd) ? compilerCmd[0] : compilerCmd,
+                [
+                    ...(Array.isArray(compilerCmd) ? compilerCmd.slice(1) : []),
+                    binPath,
+                    ...language.args,
+                ],
                 spawnOpts,
             );
             break;
