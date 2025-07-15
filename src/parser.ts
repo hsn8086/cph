@@ -15,12 +15,12 @@ export const getProbSaveLocation = (srcPath: string): string => {
     const savePreference = getSaveLocationPref();
     const srcFileName = path.basename(srcPath);
     const srcFolder = path.dirname(srcPath);
-    const hash = crypto
-        .createHash('md5')
-        .update(srcPath)
-        .digest('hex')
-        .substr(0);
-    const baseProbName = `.${srcFileName}_${hash}.prob`;
+    // const hash = crypto
+    //     .createHash('md5')
+    //     .update(srcPath)
+    //     .digest('hex')
+    //     .substr(0);
+    const baseProbName = `.${srcFileName}.prob`;
     const cphFolder = path.join(srcFolder, '.cph');
     if (savePreference && savePreference !== '') {
         return path.join(savePreference, baseProbName);
@@ -34,7 +34,18 @@ export const getProblem = (srcPath: string): Problem | null => {
     let problem: string;
     try {
         problem = fs.readFileSync(probPath).toString();
-        return JSON.parse(problem);
+        let problemJson = JSON.parse(problem);
+        console.log('Problem JSON:', problemJson);
+        globalThis.logger.log(`Problem JSON: ${JSON.stringify(problemJson)}`);
+        globalThis.logger.log(`--------------------------------------------`);
+        if (!path.isAbsolute(problemJson.srcPath)) {
+            // If srcPath is not absolute, convert it to absolute path
+            problemJson.srcPath = path.join(
+                path.dirname(srcPath),
+                problemJson.srcPath,
+            );
+        }
+        return problemJson;
     } catch (err) {
         return null;
     }
@@ -48,6 +59,10 @@ export const saveProblem = (srcPath: string, problem: Problem) => {
     if (getSaveLocationPref() === '' && !fs.existsSync(cphFolder)) {
         globalThis.logger.log('Making .cph folder');
         fs.mkdirSync(cphFolder);
+    }
+    if (path.isAbsolute(problem.srcPath)) {
+        // use file name only
+        problem.srcPath = path.basename(problem.srcPath);
     }
 
     const probPath = getProbSaveLocation(srcPath);

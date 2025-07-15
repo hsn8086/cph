@@ -8,6 +8,7 @@ import * as vscode from 'vscode';
 import { getJudgeViewProvider } from '../extension';
 import { getIgnoreSTDERRORPref } from '../preferences';
 import telmetry from '../telmetry';
+import path from 'path';
 
 export const runSingleAndSave = async (
     problem: Problem,
@@ -19,6 +20,13 @@ export const runSingleAndSave = async (
         globalThis.reporter.sendTelemetryEvent(telmetry.RUN_TESTCASE);
     }
     globalThis.logger.log('Run and save started', problem, id);
+    globalThis.logger.log(path.isAbsolute(problem.srcPath));
+    if (!path.isAbsolute(problem.srcPath)) {
+        problem.srcPath = path.join(
+            path.dirname(vscode.window.activeTextEditor?.document.fileName || ''),
+            problem.srcPath,
+        );
+    }
     const srcPath = problem.srcPath;
     const language = getLanguage(srcPath);
     const binPath = getBinSaveLocation(srcPath);
