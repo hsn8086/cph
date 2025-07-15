@@ -1,11 +1,11 @@
 {
     "name": "cph-hsn-edition",
-    "displayName": "cph(HSN Edition)",
+    "displayName": "CPH (HSN Edition)",
     "description": "Makes judging, compiling, and downloading problems for competitve programming easy. Also supports auto-submit for a few sites.",
     "license": "GPL-3.0-or-later",
     "icon": "icon.png",
     "publisher": "hsn8086",
-    "version": "2077.0.0",
+    "version": "1.0.0",
     "engines": {
         "vscode": "^1.52.0"
     },
@@ -15,9 +15,6 @@
     "activationEvents": [
         "*"
     ],
-    "sponsor": {
-        "url": "https://rb.gy/5iiorz"
-    },
     "main": "dist/extension.js",
     "contributes": {
         "viewsContainers": {
@@ -430,6 +427,6 @@
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/agrawal-d/competitive-programming-helper/"
+        "url": "https://github.com/hsn8086/cph"
     }
 }
